@@ -44,7 +44,7 @@ public abstract class Config {
 	}
 	/**
 	 * 加载配置文件<br>
-	 * 默认加载default.properpties<br>
+	 * 默认加载default.properties<br>
 	 * 启动参数中指定-c参数时加载外部配置文件覆盖默认配置 <br>
 	 * -c [config_file_path]
 	 * @throws IOException 
@@ -142,7 +142,7 @@ public abstract class Config {
 		ps.setProperty(key, value);
 	}
 	/**
-	 * 取String类型配置参数，无配置时输出告警
+	 * 取String类型配置参数，无配置时输出警告
 	 */
 	public static String getString(String key) {
 		return getString(key, null);

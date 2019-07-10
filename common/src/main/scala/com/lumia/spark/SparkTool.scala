@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.slf4j.{Logger, LoggerFactory}
 
 /**
-  * @description
+  * @description 创建spark应用的工具类
   * @author lumia
   * @date 2019/7/10 10:27
   */
@@ -23,7 +23,7 @@ abstract class SparkTool {
 
     init()
     //创建SparkSession对象
-    sparkSession = builder.getOrCreate();
+    sparkSession = builder.getOrCreate()
 
     Logger.info("==============开始执行spark程序=============")
 
@@ -35,7 +35,7 @@ abstract class SparkTool {
 
   /**
     * 在run方法中编写spark的业务逻辑
-    * @param args
+    * @param args 运行参数
     */
   def run(args: Array[String])
 
