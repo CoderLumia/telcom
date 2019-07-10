@@ -89,7 +89,6 @@ object MergeLocation extends SparkTool {
     * 初始化spark的配置
     */
   override def init(): Unit = {
-    builder.master("local[4]")
     //spark  shuffle  过程数据落地缓存内存大小
     builder.config("spark.shuffle.file.buffer", "64k")
     //reduce去map中一次最多拉去多少数据
@@ -106,6 +105,5 @@ object MergeLocation extends SparkTool {
     builder.config("spark.shuffle.memoryFraction", "0.4")
     //  RDD持久化可以使用的内存
     builder.config("spark.storage.memoryFraction", "0.4")
-
   }
 }

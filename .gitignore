@@ -5,8 +5,9 @@
 # IntelliJ project files
 .idea
 *.iml
-mergelocation/target
-common/target
 target/
+common/target
+mergelocation/target
+staypoint/target
 out
 gen
