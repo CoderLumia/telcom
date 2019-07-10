@@ -19,8 +19,6 @@ public final class Constants {
     //分区名
     protected static final String PARTITION_NAME = "/day_id=";
 
-    //数据分隔符
-    protected static final String DATA_SPLIT = Config.getString("data.split");
 
 
 }

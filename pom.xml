@@ -15,6 +15,7 @@
         <module>common</module>
         <module>mergelocation</module>
         <module>staypoint</module>
+        <module>tour</module>
     </modules>
     <properties>
         <spark.version>2.4.3</spark.version>

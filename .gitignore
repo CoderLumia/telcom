@@ -9,5 +9,6 @@ target/
 common/target
 mergelocation/target
 staypoint/target
+tour/target
 out
 gen
