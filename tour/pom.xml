@@ -12,11 +12,17 @@
     <artifactId>tour</artifactId>
 
     <dependencies>
+        <!-- 公共模块 -->
         <dependency>
-            <!-- 公共模块 -->
             <groupId>com.lumia</groupId>
             <artifactId>common</artifactId>
             <version>1.0</version>
+        </dependency>
+        <!-- redis connection -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.1</version>
         </dependency>
     </dependencies>
 

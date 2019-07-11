@@ -11,16 +11,21 @@ public final class Constants {
     private Constants(){}
 
     //停留表输入路径
-    protected final static String STAYPOINT_INPUT_PATH = Config.getString("staypoint.input.path");
+    public final static String STAYPOINT_INPUT_PATH = Config.getString("staypoint.input.path");
     //用户画像表输入路径
-    protected final static String USERTAG_INPUT_PATH = Config.getString("usertag.input.path");
+    public final static String USERTAG_INPUT_PATH = Config.getString("usertag.input.path");
     //省游客表输出路径
-    protected final static String PROVINCE_OUTPUT_PATH = Config.getString("province.output.path");
+    public final static String PROVINCE_OUTPUT_PATH = Config.getString("province.output.path");
+    //省游客输入路径
+    public final static String PROVINCE_INPUT_PATH = Config.getString("province.input.path");
     //日分区名
-    protected final static String PARTITION_NAME_DAY = "/day_id=";
+    public final static String PARTITION_NAME_DAY = "/day_id=";
     //月分区名
-    protected final static String PARTITION_NAME_MONTH = "/month_id=";
-
+    public final static String PARTITION_NAME_MONTH = "/month_id=";
+    //redis的host
+    public final static String REDIS_HOST= Config.getString("redis.host");
+    //redis端口
+    public final static Integer REDIS_PORT = Config.getInt("redis.port");
 
 
 }
