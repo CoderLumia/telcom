@@ -9,7 +9,7 @@ import com.lumia.tour.util.IndexToRedis
   * @author lumia
   * @date 2019/7/10 19:20
   */
-object PassengerFlow extends SparkTool {
+object ProvincePassengerFlow extends SparkTool {
   /**
     * 在run方法中编写spark的业务逻辑
     *
@@ -78,9 +78,9 @@ object PassengerFlow extends SparkTool {
 
     def saveDataByColumn(column: String) = {
       if (column != null) {
-        IndexToRedis(joinDF, dayId, "d_province_id", column)
+        IndexToRedis.saveDataToRedis(joinDF, dayId, "d_province_id", column)
       } else {
-        IndexToRedis(joinDF, dayId, "d_province_id")
+        IndexToRedis.saveDataToRedis(joinDF, dayId, "d_province_id")
       }
     }
 
@@ -131,22 +131,22 @@ object PassengerFlow extends SparkTool {
     */
   override def init(): Unit = {
     //spark  shuffle  过程数据落地缓存内存大小
-    builder.config("spark.shuffle.file.buffer", "64k")
-    //reduce去map中一次最多拉去多少数据
-    builder.config("spark.reducer.maxSizeInFlight", "96m")
-    //shuffle read task从shuffle write task所在节点拉取属于自己的数据时  重试次数
-    builder.config("spark.shuffle.io.maxRetries", "10")
-    //shuffle read task从shuffle write task所在节点拉取属于自己的数据时  等待时间
-    builder.config("spark.shuffle.io.retryWait", "60s")
+  builder.config("spark.shuffle.file.buffer", "64k")
+  //reduce去map中一次最多拉去多少数据
+  builder.config("spark.reducer.maxSizeInFlight", "96m")
+  //shuffle read task从shuffle write task所在节点拉取属于自己的数据时  重试次数
+  builder.config("spark.shuffle.io.maxRetries", "10")
+  //shuffle read task从shuffle write task所在节点拉取属于自己的数据时  等待时间
+  builder.config("spark.shuffle.io.retryWait", "60s")
 
-    //两个一起调节，剩下0.2是task运行时可以使用的内存
-    //启用内存管理模式，使下面的内存分配生效
-    builder.config("spark.memory.useLegacyMode", "true")
-    // shuffle  内存占比
-    builder.config("spark.shuffle.memoryFraction", "0.4")
-    //  RDD持久化可以使用的内存
-    builder.config("spark.storage.memoryFraction", "0.4")
-    // sql的shuffle分区数量
-    builder.config("spark.sql.shuffle.partitions", "10")
-  }
+  //两个一起调节，剩下0.2是task运行时可以使用的内存
+  //启用内存管理模式，使下面的内存分配生效
+  builder.config("spark.memory.useLegacyMode", "true")
+  // shuffle  内存占比
+  builder.config("spark.shuffle.memoryFraction", "0.4")
+  //  RDD持久化可以使用的内存
+  builder.config("spark.storage.memoryFraction", "0.4")
+  // sql的shuffle分区数量
+  builder.config("spark.sql.shuffle.partitions", "10")
+}
 }

@@ -18,6 +18,10 @@ public final class Constants {
     public final static String PROVINCE_OUTPUT_PATH = Config.getString("province.output.path");
     //省游客输入路径
     public final static String PROVINCE_INPUT_PATH = Config.getString("province.input.path");
+    //市游客输出路径
+    public final static String CITY_INPUT_PATH = Config.getString("city.output.path");
+    //市游客输入路径
+    public final static String CITY_OUTPUT_PATH = Config.getString("city.input.path");
     //日分区名
     public final static String PARTITION_NAME_DAY = "/day_id=";
     //月分区名

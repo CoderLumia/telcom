@@ -5,11 +5,13 @@ import com.lumia.util.{Geography, SSXRelation}
 import org.apache.spark.sql.SaveMode
 
 /**
-  * @description 省游客表数据生成
+  * @description 市级游客统计
   * @author lumia
-  * @date 2019/7/10 17:21
+  * @date 2019/7/11 20:06
   */
-object DalTourProvince extends SparkTool {
+object DalTourCity extends SparkTool{
+
+
   /**
     * 在run方法中编写spark的业务逻辑
     *
@@ -75,29 +77,26 @@ object DalTourProvince extends SparkTool {
       //常住地区县
       val resi_county_id = row.getAs[String]("resi_county_id")
 
-      //停留点省id
-      val provinceId = SSXRelation.COUNTY_PROVINCE.get(county_id)
+      //停留点市id
+      val cityId = SSXRelation.COUNTY_CITY.get(county_id)
 
-      val key = mdn + "\t" + provinceId + "\t" + resi_county_id
+      //以手机号与市id作为key进行分组
+      val key = mdn + "\t" + cityId + "\t" + resi_county_id
       (key, s"$grid_id\t$duration\t$resi_grid_id")
     })
 
-    /**
-      * 出行距离大于10km
-      * 在省内停留时间大于3个小时
-      */
     val filterRDD = kvRDD
       .groupByKey()
       .map(tuple => {
-        val mdnAndProvinceAndCounty = tuple._1.split("\t")
-        val mdn = mdnAndProvinceAndCounty(0)
-        val provinceId = mdnAndProvinceAndCounty(1)
-        val resiCountyId = mdnAndProvinceAndCounty(2)
+        val mdnAndCityAndCounty = tuple._1.split("\t")
+        val mdn = mdnAndCityAndCounty(0)
+        val cityId = mdnAndCityAndCounty(1)
+        val countyId = mdnAndCityAndCounty(2)
 
-        //计算出行最远的点
         val points = tuple._2.toList
 
-        val distances = points.map(line => {
+        //计算最远的点
+        val maxDistance = points.map(line => {
           val split = line.split("\t")
           //目的地网格
           val grid_id = split(0).toLong
@@ -106,42 +105,41 @@ object DalTourProvince extends SparkTool {
           //计算距离
           val distance = Geography.calculateLength(grid_id, resi_grid_id)
           distance
-        })
+        }).max
 
-        //最远距离
-        val maxDistance = distances.max
+          val sumDuration = points.map(line => {
+            val split = line.split("\t")
+            val duration = split(1).toDouble
+            duration
+          }).sum
 
-        val sumDuration = points.map(line => {
-          line.split("\t")(1).toInt
-        }).sum
-        //返回值
-        (mdn, resiCountyId, provinceId, sumDuration.toDouble, maxDistance)
+          (mdn, countyId, cityId, sumDuration.toDouble, maxDistance)
       }).filter(tuple => {
-      val sumDuration = tuple._4
-      val maxDistance = tuple._5
-      sumDuration > 180 && maxDistance > 10000
+        val sumDuration = tuple._4
+        val maxDistance = tuple._5
+        sumDuration > 180 && maxDistance > 10000
     })
 
     import sqlContext.implicits._
 
+    val cityOutputPath = Constants.CITY_OUTPUT_PATH + Constants.PARTITION_NAME_DAY + dayId
+    Logger.info(s"城市游客表输出路径:$cityOutputPath")
+
     /**
-      * 市游客表数据格式
       * mdn string comment '手机号大写MD5加密'
       * ,source_county_id string comment '游客来源区县'
-      * ,d_province_id string comment '旅游目的地省代码'
+      * ,d_city_id string comment '旅游目的地省代码'
       * ,d_stay_time double comment '游客在该省停留的时间长度（小时）'
       * ,d_max_distance double comment '游客本次出游距离'
       */
 
-    val provinceOutputPath = Constants.PROVINCE_OUTPUT_PATH + Constants.PARTITION_NAME_DAY + dayId
-    Logger.info(s"省游客表输出路径:$provinceOutputPath")
+    //将城市游客表写入到hdfs中
     filterRDD
-      .toDF("mdn", "source_county_id", "d_province_id", "d_stay_time", "d_max_distance")
+      .toDF("mdn", "source_county_id", "d_city_id", "d_stay_time", "d_max_distance")
       .write
       .mode(saveMode = SaveMode.Overwrite)
-      .parquet(provinceOutputPath)
+      .parquet(cityOutputPath)
   }
-
 
   /**
     * 初始化spark的配置

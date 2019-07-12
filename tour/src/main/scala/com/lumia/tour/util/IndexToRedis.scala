@@ -16,22 +16,22 @@ object IndexToRedis {
     *
     * @param dataFrame  游客表与用户画像表join
     * @param dayId      天分区
-    * @param provinceId 省id
+    * @param itemId     分类id
     * @param columns    条件指标
     */
-  def saveDataToRedis(dataFrame: DataFrame, dayId: String, provinceId: String, columns: String*): Unit = {
+  def saveDataToRedis(dataFrame: DataFrame, dayId: String, itemId: String, columns: String*): Unit = {
     var column: String = null
     if (columns.nonEmpty) {
       column = columns.toList.head
     }
     var groupDF: DataFrame = null
     if (column != null) {
-      groupDF = dataFrame.groupBy(provinceId, column).count()
+      groupDF = dataFrame.groupBy(itemId, column).count()
     } else {
-      groupDF = dataFrame.groupBy(provinceId).count()
+      groupDF = dataFrame.groupBy(itemId).count()
     }
     groupDF.rdd.map(row => {
-      val pid = row.getAs[String](provinceId)
+      val pid = row.getAs[String](itemId)
       var cName: String = null
       if (column != null) {
         cName = row.getAs[String](column)
@@ -43,7 +43,7 @@ object IndexToRedis {
         (pid, flow)
       }
     })
-      //将同一省份的数据进行聚合
+      //将分区的数据进行聚合
       .reduceByKey(_ + "|" + _)
       .foreachPartition(iter => {
         val jedis = new Jedis(Constants.REDIS_HOST, Constants.REDIS_PORT)
