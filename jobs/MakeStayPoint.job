@@ -1,0 +1,3 @@
+type=command
+dependencies=MakeMergeLocation
+command=bash /home/admin/project/staypoint-1.0/bin/MakeStayPoint.sh ${day_id}
